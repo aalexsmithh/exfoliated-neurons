@@ -1,4 +1,5 @@
 data/test_x.bin
 data/train_x.bin
-out.csv
-out.gz
+*.csv
+*.gz
+*.pkl
