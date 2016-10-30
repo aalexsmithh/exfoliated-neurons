@@ -42,7 +42,7 @@ class HandNN:
 	    return np.argmax(probs, axis=1)
 
 	def fit(self,X,y,max_iters=20000, print_loss=False):
-            self.X = X
+        self.X = X
 	    self.y = y
 	    # This is the random initialization of parameters
 	    np.random.seed(0)
@@ -64,6 +64,7 @@ class HandNN:
 	 
 	        # Backpropagation
 	        delta3 = probs
+	        print probs.shape, self.num_examples, y.shape
 	        delta3[range(self.num_examples), y] -= 1
 	        dW2 = (a1.T).dot(delta3)
 	        db2 = np.sum(delta3, axis=0, keepdims=True)

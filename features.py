@@ -1,11 +1,14 @@
 import numpy as np
 import scipy.misc as disp
-from multiprocessing.pool import ThreadPool
-import cv2, sklearn.cluster, threading, cPickle, time
+import cv2, sklearn.cluster, cPickle, time, csv, load,sklearn.linear_model
 
 def main():
 	X = load.load("X.pkl")
-	print X
+	Y = open_csv("data/train_y.csv")
+	lr = sklearn.linear_model.LogisticRegression()
+	lr.fit(X[0:70000],Y[0:70000])
+	print lr.score(X[70000:],Y[70000:])
+
 
 def get_clust():
 	a = time.clock()
@@ -41,6 +44,14 @@ def run_clust():
 	save_to(clusters,"clust.pkl")
 
 	print "Total computation time was", time.clock() - a
+
+def open_csv(filename):
+	with open(filename, 'rb') as csvfile:
+		ret = []
+		csv_in = csv.reader(csvfile, delimiter=',', quotechar='"')
+		for line in csv_in:
+			ret.append(line[1])
+		return ret[1:]
 
 def make_vectors(train,clust,n):
 	feats = [[0 for _ in range(n)] for _ in range(len(train))]
