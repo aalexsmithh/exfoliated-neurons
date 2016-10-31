@@ -10,10 +10,10 @@ def main():
 	hidden = [3600,1800,900,450,225,112,56,28,14,7,3]
 
 	for i in hidden:
-		a = time.clock()
+		a = time.time()
 		score = tf_run(data[0:BRK_PT],data[BRK_PT:],i)
-		elap = time.clock() - a
-		print i, "hidden layers gives", score, "accuracy in", elap, "secs"
+		elap = time.time() - a
+		print i, "hidden layers gives", score, "accuracy in", elap/float(60), "mins"
 
 # Building the encoder
 def encoder(x,weights,biases):
@@ -31,21 +31,22 @@ def decoder(x,weights,biases):
 def score(preds,X,Y):
 	score = 0
 	tot = 0
-	for i,ex in eunmerate(X):
+	for i,ex in enumerate(X):
 		labels = preds[i]
-		for j,label in eunmerate(labels):
-			if label == Y[i][j]:
+		for j,label in enumerate(labels):
+			if label >= Y[i][j]-10 and label <= Y[i][j]+10:
 				score += 1
 				tot += 1
 			else:
 				tot += 1
-	return score/tot
+	print score, tot
+	return float(score)/float(tot)
 		
 def tf_run(data_train,data_test,n_hid):
 	# Parameters
 	learning_rate = 0.01
-	training_epochs = 20
-	batch_size = 256
+	training_epochs = 1000
+	batch_size = 2500
 	display_step = 1
 	examples_to_show = 10
 
@@ -77,7 +78,7 @@ def tf_run(data_train,data_test,n_hid):
 
 	# Define loss and optimizer, minimize the squared error
 	cost = tf.reduce_mean(tf.pow(y_true - y_pred, 2))
-	optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(cost)
+	optimizer = tf.train.RMSPropOptimizer(learning_rate,decay=0.9).minimize(cost)
 
 	# Initializing the variables
 	init = tf.initialize_all_variables()
@@ -94,18 +95,15 @@ def tf_run(data_train,data_test,n_hid):
 				# Run optimization op (backprop) and cost op (to get loss value)
 				_, c = sess.run([optimizer, cost], feed_dict={X: batch_xs})
 			# Display logs per epoch step
-			if epoch % display_step == 0:
-				print("Epoch:", '%04d' % (epoch+1),
-					  "cost=", "{:.9f}".format(c))
-
-		print("Optimization Finished!")
+			# if epoch % display_step == 0:
+			# 	print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
 
 		# Applying encode and decode over test set
 		encode_decode = sess.run(
 			y_pred, feed_dict={X: data_test})
 		# Compare original images with their reconstructions
-		score(encode_decode,data_test,data_test)
-		return score
+		acc = score(encode_decode,data_test,data_test)
+		return acc
 
 if __name__ == '__main__':
 	main()
