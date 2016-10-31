@@ -11,28 +11,28 @@ def main():
 
 
 def get_clust():
-	a = time.clock()
+	a = time.time()
 	print "Opening data..."
 	data = np.fromfile('data/train_x.bin', dtype='uint8')
 	data = data.reshape((100000,60,60))
 	print "Opening clusterer..."
-	clusters = open_to('surf_50_full.pkl')
+	clusters = open_to('sift_50_mini.pkl')
 	print "Getting features..."
-	features = feature_extract(data[0:100000],'surf')
+	features = feature_extract(data[0:100000],'sift')
 	print "Assembling vectors..."
 	X = make_vectors(features,clusters,50)
 	print "Saving..."
-	save_to(X,'X.pkl')
+	save_to(X,'X1.pkl')
 
-	print "Total computation time was", time.clock() - a
+	print "Total computation time was", time.time() - a
 
 def run_clust():
-	a = time.clock()
+	a = time.time()
 	print "Opening data..."
 	data = np.fromfile('data/train_x.bin', dtype='uint8')
 	data = data.reshape((100000,60,60))
 	print "Getting features..."
-	features = feature_extract(data[0:100000],'surf')
+	features = feature_extract(data[0:100000],'sift')
 	print "Creating vocab...",
 	vocab = create_vocab(features,128)
 	print "\t" + str(len(vocab)) + " features assembled"
@@ -41,9 +41,9 @@ def run_clust():
 	# clusters = sklearn.cluster.MiniBatchKMeans(50)
 	clusters.fit(vocab)
 	print "Saving..."
-	save_to(clusters,"clust.pkl")
+	save_to(clusters,"sift_50_mini.pkl")
 
-	print "Total computation time was", time.clock() - a
+	print "Total computation time was", time.time() - a
 
 def open_csv(filename):
 	with open(filename, 'rb') as csvfile:
@@ -134,4 +134,5 @@ def show_img(img,caption):
 
 
 if __name__ == '__main__':
-	main()
+	run_clust()
+	get_clust()
