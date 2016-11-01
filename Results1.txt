@@ -1,0 +1,48 @@
+Results w/:
+- all features
+- c=1
+logreg = linear_model.LogisticRegression(C=1e5)
+svc = svm.SVC(kernel='linear', C=c)
+rbf_svc = svm.SVC(kernel='rbf', gamma=0.7, C=c)
+poly_svc = svm.SVC(kernel='poly', degree=3, C=c)
+lin_svc = svm.LinearSVC(C=c)
+- 3 fold cv
+
+X:  (100000, 50)
+Y:  (100000,)
+logreg
+0.111044453776
+0.109197816044
+0.107567210754
+0.109269826858 
+
+svc
+0.109274701542
+0.108357832843
+0.104806769083
+0.107479767823 
+
+rbf_svc
+0.100215969764
+0.0990280194396
+0.0994959193471
+0.099579969517 
+
+poly_svc
+0.101565780791
+0.101427971441
+0.101776284205
+0.101590012146 
+
+lin_svc
+0.110234567161
+0.109167816644
+0.107477196351
+0.108959860052 
+
+Format: 
+name of classifier
+score
+score
+score
+mean of score
