@@ -98,14 +98,14 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 		sess.run(init)
 		total_batch = len(data_train)/batch_size
 		# Training cycle
+		costs = []
 		for epoch in range(max_epochs):
-			costs = []
 			# Loop over all batches
 			for i in range(total_batch):
 				batch_xs = data_train[(i*batch_size):((i+1)*batch_size)]
 				# Run optimization op (backprop) and cost op (to get loss value)
 				_, c = sess.run([optimizer, cost], feed_dict={X: batch_xs})
-				costs.append(c)
+			costs.append(c)
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
