@@ -109,10 +109,11 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
-			if abs(costs[-2] - costs[-1]) < train_cost_threshold and epoch != 0:
-				if verbose:
-					print "Training reached threshold. Breaking..."
-				break
+			if epoch != 0 and epoch != 1:
+				if abs(costs[-2] - costs[-1]) < train_cost_threshold:
+					if verbose:
+						print "Training reached threshold. Breaking..."
+					break
 
 		# Applying encode and decode over test set
 		encode_decode = sess.run(
