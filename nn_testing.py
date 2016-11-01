@@ -3,7 +3,8 @@ import csv, time
 import tensorflow as tf
 
 def main():
-	BRK_PT = 70000
+	BRK_PT = 8000
+	END_PT = 10000
 	data = np.fromfile('train_x.bin', dtype='uint8')
 	data = data.reshape((100000,3600))
 
@@ -12,7 +13,7 @@ def main():
 
 	for i in reversed(hidden):
 		a = time.time()
-		score = tf_run(data[0:BRK_PT],data[BRK_PT:],i,True)
+		score = tf_run(data[0:BRK_PT],data[BRK_PT:END_PT],i,True)
 		elap = time.time() - a
 		s = str(i) + " hidden layers gives " + str(score) + " accuracy in " + str(elap/float(60)) + " mins"
 		print s
