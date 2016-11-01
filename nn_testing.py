@@ -106,12 +106,12 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 				# Run optimization op (backprop) and cost op (to get loss value)
 				_, c = sess.run([optimizer, cost], feed_dict={X: batch_xs})
 				costs.append(c)
-			if costs[-2] - costs[-1] < train_cost_threshold:
-				print "Training reached threshold. Breaking..."
-				break
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
+			if costs[-2] - costs[-1] < train_cost_threshold:
+				print "Training reached threshold. Breaking..."
+				break
 
 		# Applying encode and decode over test set
 		encode_decode = sess.run(
