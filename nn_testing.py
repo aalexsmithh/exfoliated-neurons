@@ -109,7 +109,7 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
-			if costs[-2] - costs[-1] < train_cost_threshold and epoch is not 0:
+			if abs(costs[-2] - costs[-1]) < train_cost_threshold and epoch is not 0:
 				print "Training reached threshold. Breaking..."
 				break
 
