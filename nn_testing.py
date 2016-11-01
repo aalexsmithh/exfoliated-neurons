@@ -54,7 +54,7 @@ def score(preds,X,Y):
 def tf_run(data_train,data_test,n_hid,verbose=False):
 	# Parameters
 	learning_rate = 0.01
-	training_epochs = 1000
+	max_epochs = 1000
 	train_cost_threshold = 1e-3
 	batch_size = 2500
 	display_step = 1
@@ -98,7 +98,7 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 		sess.run(init)
 		total_batch = len(data_train)/batch_size
 		# Training cycle
-		for epoch in range(training_epochs):
+		for epoch in range(max_epochs):
 			costs = []
 			# Loop over all batches
 			for i in range(total_batch):
@@ -109,7 +109,7 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
-			if abs(costs[-2] - costs[-1]) < train_cost_threshold and epoch is not 0:
+			if abs(costs[-2] - costs[-1]) < train_cost_threshold and epoch != 0:
 				print "Training reached threshold. Breaking..."
 				break
 
