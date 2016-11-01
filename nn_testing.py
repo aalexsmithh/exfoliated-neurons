@@ -55,8 +55,9 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 	# Parameters
 	learning_rate = 0.01
 	training_epochs = 1000
+	train_cost_threshold = 1e-3
 	batch_size = 2500
-	display_step = 10
+	display_step = 1
 	examples_to_show = 10
 
 	# Network Parameters
@@ -98,11 +99,16 @@ def tf_run(data_train,data_test,n_hid,verbose=False):
 		total_batch = len(data_train)/batch_size
 		# Training cycle
 		for epoch in range(training_epochs):
+			costs = []
 			# Loop over all batches
 			for i in range(total_batch):
 				batch_xs = data_train[(i*batch_size):((i+1)*batch_size)]
 				# Run optimization op (backprop) and cost op (to get loss value)
 				_, c = sess.run([optimizer, cost], feed_dict={X: batch_xs})
+				costs.append(c)
+			if costs[-2] - costs[-1] < train_cost_threshold:
+				print "Training reached threshold. Breaking..."
+				break
 			# Display logs per epoch step
 			if epoch % display_step == 0 and verbose:
 				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
