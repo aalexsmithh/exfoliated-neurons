@@ -4,15 +4,15 @@ import tensorflow as tf
 
 def main():
 	BRK_PT = 70000
-	data = np.fromfile('data/train_x.bin', dtype='uint8')
+	data = np.fromfile('train_x.bin', dtype='uint8')
 	data = data.reshape((100000,3600))
 
 	hidden = [3600,1800,900,450,225,112,56,28,14,7,3]
 	results = []
 
-	for i in hidden:
+	for i in reversed(hidden):
 		a = time.time()
-		score = tf_run(data[0:BRK_PT],data[BRK_PT:],i)
+		score = tf_run(data[0:BRK_PT],data[BRK_PT:],i,True)
 		elap = time.time() - a
 		s = str(i) + " hidden layers gives " + str(score) + " accuracy in " + str(elap/float(60)) + " mins"
 		print s
@@ -51,12 +51,12 @@ def score(preds,X,Y):
 	print score, tot
 	return float(score)/float(tot)
 		
-def tf_run(data_train,data_test,n_hid):
+def tf_run(data_train,data_test,n_hid,verbose=False):
 	# Parameters
 	learning_rate = 0.01
 	training_epochs = 1000
 	batch_size = 2500
-	display_step = 1
+	display_step = 10
 	examples_to_show = 10
 
 	# Network Parameters
@@ -104,8 +104,8 @@ def tf_run(data_train,data_test,n_hid):
 				# Run optimization op (backprop) and cost op (to get loss value)
 				_, c = sess.run([optimizer, cost], feed_dict={X: batch_xs})
 			# Display logs per epoch step
-			# if epoch % display_step == 0:
-			# 	print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
+			if epoch % display_step == 0 and verbose:
+				print "Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c)
 
 		# Applying encode and decode over test set
 		encode_decode = sess.run(

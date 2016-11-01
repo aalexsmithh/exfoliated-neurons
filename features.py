@@ -3,7 +3,7 @@ import scipy.misc as disp
 import cv2, sklearn.cluster, cPickle, time, csv, load,sklearn.linear_model
 
 def main():
-	X = load.load("X.pkl")
+	X = load.load("X1.pkl")
 	Y = open_csv("data/train_y.csv")
 	lr = sklearn.linear_model.LogisticRegression()
 	lr.fit(X[0:70000],Y[0:70000])
@@ -11,6 +11,7 @@ def main():
 
 
 def get_clust():
+	already_compute_feats = False
 	a = time.time()
 	print "Opening data..."
 	data = np.fromfile('data/train_x.bin', dtype='uint8')
@@ -18,7 +19,10 @@ def get_clust():
 	print "Opening clusterer..."
 	clusters = open_to('sift_50_mini.pkl')
 	print "Getting features..."
-	features = feature_extract(data[0:100000],'sift')
+	if already_compute_feats:
+		features = open_to('feats.pkl')
+	else:
+		features = feature_extract(data[0:100000],'sift')
 	print "Assembling vectors..."
 	X = make_vectors(features,clusters,50)
 	print "Saving..."
@@ -27,18 +31,24 @@ def get_clust():
 	print "Total computation time was", time.time() - a
 
 def run_clust():
+	already_compute_feats = False
 	a = time.time()
-	print "Opening data..."
-	data = np.fromfile('data/train_x.bin', dtype='uint8')
-	data = data.reshape((100000,60,60))
-	print "Getting features..."
-	features = feature_extract(data[0:100000],'sift')
+	if not already_compute_feats:
+		print "Opening data..."
+		data = np.fromfile('data/train_x.bin', dtype='uint8')
+		data = data.reshape((100000,60,60))
+		print "Getting features..."
+		features = feature_extract(data[0:100000],'sift')
+		save_to(features,'feats.pkl')
+	else:
+		print "Getting features..."
+		features = open_to('feats.pkl')
 	print "Creating vocab...",
 	vocab = create_vocab(features,128)
 	print "\t" + str(len(vocab)) + " features assembled"
 	print "Clustering..."
-	clusters = sklearn.cluster.KMeans(n_clusters=50,verbose=0)
-	# clusters = sklearn.cluster.MiniBatchKMeans(50)
+	# clusters = sklearn.cluster.KMeans(n_clusters=50,verbose=0)
+	clusters = sklearn.cluster.MiniBatchKMeans(50)
 	clusters.fit(vocab)
 	print "Saving..."
 	save_to(clusters,"sift_50_mini.pkl")
@@ -136,3 +146,4 @@ def show_img(img,caption):
 if __name__ == '__main__':
 	run_clust()
 	get_clust()
+	main()
