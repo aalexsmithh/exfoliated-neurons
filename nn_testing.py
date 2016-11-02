@@ -11,7 +11,7 @@ def main():
 	hidden = [3600,1800,900,450,225,112,56,28,14,7,3]
 	results = []
 
-	for i in reversed(hidden):
+	for i in hidden:
 		a = time.time()
 		score = tf_run(data[0:BRK_PT],data[BRK_PT:END_PT],i)
 		elap = time.time() - a
