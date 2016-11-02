@@ -11,7 +11,7 @@ def main():
 	hidden = [3600,1800,900,450,225]#,112,56,28,14,7,3]
 	results = []
 
-	f = open('tf_train.log','w')
+	f = open('tf_train.log','a')
 	f.close()
 
 	for i in reversed(hidden):
