@@ -1,0 +1,13 @@
+3 hidden layers gives 0.01042 accuracy in 3.45305159887 mins
+75024 7200000
+7 hidden layers gives 0.01042 accuracy in 2.0435182333 mins
+75024 7200000
+14 hidden layers gives 0.01042 accuracy in 1.95808091561 mins
+75024 7200000
+28 hidden layers gives 0.01042 accuracy in 5.01654941638 mins
+75033 7200000
+56 hidden layers gives 0.01042125 accuracy in 5.51254758437 mins
+75335 7200000
+112 hidden layers gives 0.0104631944444 accuracy in 5.55082739989 mins
+77261 7200000
+225 hidden layers gives 0.0107306944444 accuracy in 6.79916259845 mins
