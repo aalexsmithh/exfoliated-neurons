@@ -5,7 +5,7 @@ import tensorflow as tf
 def main():
 	BRK_PT = 8000
 	END_PT = 10000
-	data = np.fromfile('train_x.bin', dtype='uint8')
+	data = np.fromfile('../train_x.bin', dtype='uint8')
 	data = data.reshape((100000,3600))
 
 	hidden = [3600,1800,900]#,450,225,112,56,28,14,7,3]
