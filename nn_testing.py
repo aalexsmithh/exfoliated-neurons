@@ -13,7 +13,7 @@ def main():
 
 	for i in reversed(hidden):
 		a = time.time()
-		score = tf_run(data[0:BRK_PT],data[BRK_PT:END_PT],i,True)
+		score = tf_run(data[0:BRK_PT],data[BRK_PT:END_PT],i)
 		elap = time.time() - a
 		s = str(i) + " hidden layers gives " + str(score) + " accuracy in " + str(elap/float(60)) + " mins"
 		print s
