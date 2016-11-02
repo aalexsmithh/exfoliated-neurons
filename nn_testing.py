@@ -11,19 +11,21 @@ def main():
 	hidden = [3600,1800,900,450,225,112,56,28,14,7,3]
 	results = []
 
+	f = open('tf_train.log','w')
+	f.close()
+
 	for i in hidden:
 		a = time.time()
 		score = tf_run(data[0:BRK_PT],data[BRK_PT:END_PT],i)
 		elap = time.time() - a
 		s = str(i) + " hidden layers gives " + str(score) + " accuracy in " + str(elap/float(60)) + " mins"
 		print s
-		results.append(s)
-
-	f = open('tf_train.log','w')
-	for r in results:
-		f.write(r)
+		f = open('tf_train.log','a')
+		f.write(s)
 		f.write("\n")
-	f.close()
+		f.close()
+
+	
 
 # Building the encoder
 def encoder(x,weights,biases):
