@@ -4,8 +4,12 @@ import numpy as np
 import theano
 from theano import tensor as T
 import lasagne
+import csv
+import time
+import matplotlib.pyplot as plt
+import sys
 
-print "Setting up/Compiling...."
+print("Setting up/Compiling....")
 
 data_size=(None,1,60,60) # Batch size x Img Channels x Height x Width
 output_size=19 # We will run the example in mnist - 10 digits
@@ -66,9 +70,116 @@ get_preds = theano.function([input_var], test_prediction)
 
 
 ##########################################################################################
-data = np.fromfile('../train_x.bin', dtype='uint8')
+print("Loading data...")
+
+def open_csv(filename):
+	with open(filename, 'rb') as csvfile:
+		ret = []
+		csv_in = csv.reader(csvfile, delimiter=',', quotechar='"')
+		for line in csv_in:
+			ret.append(line[1])
+		return ret[1:]
+
+x_data = np.fromfile('../train_x.bin', dtype='uint8')
+y_data = open_csv('../train_y.csv')
+x_data = x_data.reshape((100000,3600))
+x_train = x_data[:80000, :]
+x_test = x_data[20000:, :]
+y_train = np.array(y_data[:80000])
+y_test = np.array(y_data[20000:])
+x_train = x_train.reshape(-1, 1, 60, 60)
+x_test = x_test.reshape(-1, 1, 60, 60)
+y_train = y_train.astype(np.int32)
+y_test = y_test.astype(np.int32)
+
+epochs = 50
+batch_size=100
 
 n_examples = x_train.shape[0]
+n_batches = n_examples / batch_size
+
+print("Beginning training...")
+
+start_time = time.time()
+
+cost_history = []
+for epoch in xrange(epochs):
+    st = time.time()
+    batch_cost_history = []
+    for batch in xrange(n_batches):
+        x_batch = x_train[batch*batch_size: (batch+1) * batch_size]
+        y_batch = y_train[batch*batch_size: (batch+1) * batch_size]
+        
+        this_cost = train_fn(x_batch, y_batch) # This is where the model gets updated
+        
+        batch_cost_history.append(this_cost)
+    epoch_cost = np.mean(batch_cost_history)
+    cost_history.append(epoch_cost)
+    en = time.time()
+    print('Epoch %d/%d, train error: %f. Elapsed time: %.2f seconds' % (epoch+1, epochs, epoch_cost, en-st))
+    
+end_time = time.time()
+print('Training completed in %.2f seconds.' % (end_time - start_time))
+
+
+###########################################################################################
+
+print("Beginning testing...")
+
+start_time = time.time()
+
+loss, acc = val_fn(x_test, y_test)
+test_error = 1 - acc
+print('Test error: %f' % test_error)
+
+end_time = time.time()
+print('Classifying %d images completed in %.2f seconds.' % (x_test.shape[0], end_time - start_time))
+
+plt.plot(cost_history)
+plt.savefig("J_over_time.png")
+
+def PlotPredictions(test_samples, predictedLabels):
+    plt.figure(figsize=(3,2))
+    f, axarr = plt.subplots(2,5)
+    for i in range(2):
+        for j in range(5):
+            index = i*5+j
+            axarr[i,j].imshow(test_samples[index].reshape(60,60), cmap='Greys', interpolation='nearest')
+            axarr[i,j].axis('off')
+            axarr[i,j].set_title('%d' % predictedLabels[index])
+
+predictedLabels = get_preds(x_test).argmax(axis=1)
+
+indices = np.random.choice(y_test.shape[0], replace=False, size=10)
+
+PlotPredictions( x_test[indices], predictedLabels[indices])
+
+print("Random examples")
+
+plt.savefig("randompreds.png")
+
+incorrectPreds = np.nonzero(predictedLabels != y_test)[0]
+someIncorrectPreds = np.random.choice(incorrectPreds, replace=False, size=10)
+
+PlotPredictions(x_test[someIncorrectPreds], predictedLabels[someIncorrectPreds])
+print("Incorrect predictions")
+
+plt.savefig("errors.png")
+
+
+weights = net['conv1'].W.get_value()
+
+plt.figure()
+f, axarr = plt.subplots(3,2)
+for i in range(3):
+    for j in range(2):
+        index = i*2+j
+        axarr[i,j].imshow(weights[index].reshape(5,5), cmap='Greys_r', interpolation='nearest')
+        axarr[i,j].axis('off')
+
+plt.savefig("weights.png")
+
+
 
 
 

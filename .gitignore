@@ -4,3 +4,4 @@ data/train_x.bin
 *.gz
 *.pkl
 .DS_Store
+*.pyc
