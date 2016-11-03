@@ -1,7 +1,6 @@
-data/test_x.bin
-data/train_x.bin
 *.csv
 *.gz
 *.pkl
 .DS_Store
 *.pyc
+*.bin
