@@ -22,8 +22,8 @@ print("Setting up/Compiling....")
 # http://luizgh.github.io/libraries/2015/12/08/getting-started-with-lasagne/
 
 ####################################
-num_units = 150
-layers = 2
+num_units = 128
+layers = 1
 conv = True
 original_mnist = False
 ####################################
@@ -141,7 +141,7 @@ if original_mnist:
 else:
 	x_data = np.fromfile('../train_x.bin', dtype='uint8')
 	y_data = open_csv('../train_y.csv')
-	x_data = x_data.reshape((100000,3600)) / 256
+	x_data = x_data.reshape((100000,3600)) / 255
 	x_train = x_data[:90000, :]
 	x_test = x_data[90000:, :]
 	y_train = np.array(y_data[:90000])
@@ -178,6 +178,9 @@ for epoch in xrange(epochs):
     print('Epoch %d/%d, train error: %f. Elapsed time: %.2f seconds' % (epoch+1, epochs, epoch_cost, en-st))
     loss, acc = val_fn(x_test, y_test)
     test_error = 1 - acc
+    # _, tacc = val_fn(x_train, y_train)
+    # train_error = 1-tacc
+    # print('Train error: %f' % train_error)
     print('Test error: %f' % test_error)
     if len(cost_history) > 2:
     	if abs((cost_history[-1] - cost_history[-2])/cost_history[-2]) < 0.01:
@@ -232,17 +235,17 @@ PlotPredictions(x_test[someIncorrectPreds], predictedLabels[someIncorrectPreds])
 plt.savefig(str(num_units) + "errors.png")
 
 
-weights = net['conv1'].W.get_value()
+# weights = net['conv1'].W.get_value()
 
-plt.figure()
-f, axarr = plt.subplots(3,2)
-for i in range(3):
-    for j in range(2):
-        index = i*2+j
-        axarr[i,j].imshow(weights[index].reshape(5,5), cmap='Greys_r', interpolation='nearest')
-        axarr[i,j].axis('off')
+# plt.figure()
+# f, axarr = plt.subplots(3,2)
+# for i in range(3):
+#     for j in range(2):
+#         index = i*2+j
+#         axarr[i,j].imshow(weights[index].reshape(5,5), cmap='Greys_r', interpolation='nearest')
+#         axarr[i,j].axis('off')
 
-plt.savefig(str(num_units) + "weights.png")
+# plt.savefig(str(num_units) + "weights.png")
 
 
 

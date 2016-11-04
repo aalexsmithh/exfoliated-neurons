@@ -18,7 +18,7 @@ x = x.reshape(100000,3600)
 y_raw = []
 
 i = 0
-with open('train_y.csv', newline='') as f_in:
+with open('train_y.csv', 'r') as f_in:
     csvreader = csv.reader(f_in)
     for row in csvreader:
         y_raw.append(int(row[1]))
