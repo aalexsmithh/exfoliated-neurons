@@ -1,12 +1,18 @@
 import numpy as np
 import scipy.misc as disp
-import cv2, sklearn.cluster, cPickle, time, csv, load,sklearn.linear_model
+import sklearn.cluster, cPickle, time, csv, sklearn.linear_model#, cv2,load
 
 def main():
-	X = load.load("X1.pkl")
+	# X = load.load("X1.pkl")
+	print 'opening X'
+	X = np.fromfile('data/train_x.bin', dtype='uint8')
+	X = X.reshape((100000,3600))
+	print 'opening y'
 	Y = open_csv("data/train_y.csv")
-	lr = sklearn.linear_model.LogisticRegression()
+	lr = sklearn.linear_model.LogisticRegression(verbose=1,n_jobs=-1,solver='sag')
+	print 'fitting'
 	lr.fit(X[0:70000],Y[0:70000])
+	print 'scoring'
 	print lr.score(X[70000:],Y[70000:])
 
 
@@ -144,6 +150,6 @@ def show_img(img,caption):
 
 
 if __name__ == '__main__':
-	run_clust()
-	get_clust()
+	# run_clust()
+	# get_clust()
 	main()
