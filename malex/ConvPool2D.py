@@ -18,7 +18,8 @@ import cPickle
 
 print("Setting up/Compiling....")
 
-
+# Used some source code from the following link, which inspired this code:
+# http://luizgh.github.io/libraries/2015/12/08/getting-started-with-lasagne/
 
 ####################################
 num_units = 100
@@ -32,7 +33,7 @@ if original_mnist:
 	output_size=10 # We will run the example in mnist - 10 digits
 else:
 	data_size=(None,1,60,60) # Batch size x Img Channels x Height x Width
-	output_size=10 # We will run the example in mnist - 10 digits
+	output_size=19 # We will run the example in mnist - 10 digits
 input_var = T.tensor4('input')
 target_var = T.ivector('targets')
 

@@ -4,6 +4,8 @@ import numpy as np
 import theano
 import lasagne
 
+# Used some source code from the following link, which inspired this code:
+# https://github.com/goelhardik/autoencoder-lasagne
 
 # Size of encoded representation
 N_ENCODED = 7200

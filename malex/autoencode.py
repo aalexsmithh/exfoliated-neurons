@@ -14,6 +14,10 @@ import pickle
 import matplotlib
 import matplotlib.pyplot as plt
 
+# Used some source code from the following link, which inspired this code:
+# https://github.com/goelhardik/autoencoder-lasagne
+
+
 # ##################################################################
 # Use the autoencoder to learn image encodings.
 
