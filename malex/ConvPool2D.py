@@ -22,10 +22,10 @@ print("Setting up/Compiling....")
 # http://luizgh.github.io/libraries/2015/12/08/getting-started-with-lasagne/
 
 ####################################
-num_units = 100
-layers = 1
+num_units = 150
+layers = 2
 conv = True
-original_mnist = True
+original_mnist = False
 ####################################
 net = {}
 if original_mnist:
@@ -43,10 +43,10 @@ if conv:
 	#Input layer:
 	net['data'] = lasagne.layers.InputLayer(data_size, input_var=input_var)
 	#Convolution + Pooling
-	net['conv1'] = lasagne.layers.Conv2DLayer(net['data'], num_filters=6, filter_size=5)
+	net['conv1'] = lasagne.layers.Conv2DLayer(net['data'], num_filters=32, filter_size=3)
 	net['pool1'] = lasagne.layers.Pool2DLayer(net['conv1'], pool_size=2)
 
-	net['conv2'] = lasagne.layers.Conv2DLayer(net['pool1'], num_filters=10, filter_size=5)
+	net['conv2'] = lasagne.layers.Conv2DLayer(net['pool1'], num_filters=32, filter_size=3)
 	net['pool2'] = lasagne.layers.Pool2DLayer(net['conv2'], pool_size=2)
 else:
 	net['pool2'] = lasagne.layers.InputLayer(data_size, input_var=input_var)
@@ -68,10 +68,9 @@ elif layers == 2:
 	net['fc1'] = lasagne.layers.DenseLayer(net['pool2'], num_units=num_units)
 	net['drop1'] = lasagne.layers.DropoutLayer(net['fc1'],  p=0.5)
 	net['fc2'] = lasagne.layers.DenseLayer(net['drop1'], num_units=num_units)
-	net['drop2'] = lasagne.layers.DropoutLayer(net['fc2'],  p=0.5)
 
 	#Output layer:
-	net['out'] = lasagne.layers.DenseLayer(net['drop2'], num_units=output_size, 
+	net['out'] = lasagne.layers.DenseLayer(net['fc2'], num_units=output_size, 
 	                                       nonlinearity=lasagne.nonlinearities.softmax)
 else:
 	net['fc1'] = lasagne.layers.DenseLayer(net['pool2'], num_units=num_units)
@@ -142,7 +141,7 @@ if original_mnist:
 else:
 	x_data = np.fromfile('../train_x.bin', dtype='uint8')
 	y_data = open_csv('../train_y.csv')
-	x_data = x_data.reshape((100000,3600))
+	x_data = x_data.reshape((100000,3600)) / 256
 	x_train = x_data[:90000, :]
 	x_test = x_data[90000:, :]
 	y_train = np.array(y_data[:90000])
@@ -153,7 +152,7 @@ else:
 	y_test = y_test.astype(np.int32)
 
 epochs = 50
-batch_size=10
+batch_size=1000
 
 n_examples = x_train.shape[0]
 n_batches = n_examples / batch_size
@@ -180,9 +179,9 @@ for epoch in xrange(epochs):
     loss, acc = val_fn(x_test, y_test)
     test_error = 1 - acc
     print('Test error: %f' % test_error)
-    # if len(cost_history) > 2:
-    # 	if abs((cost_history[-1] - cost_history[-2])/cost_history[-2]) < 0.01:
-    # 		break
+    if len(cost_history) > 2:
+    	if abs((cost_history[-1] - cost_history[-2])/cost_history[-2]) < 0.01:
+    		break
     
 end_time = time.time()
 print('Training completed in %.2f seconds.' % (end_time - start_time))

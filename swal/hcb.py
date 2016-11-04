@@ -5,7 +5,7 @@ import math
 def main():
 	minify("../data/train_x.bin")
 
-def minify(dataset,samples=9,window_size=28):
+def minify(dataset,samples=36,window_size=28):
 	'''
 	creates windows across the image and returns them in a python list
 	dataset must be a .bin file
