@@ -33,15 +33,15 @@ kernel_size = (9, 9)
 
 def main():
 
-	X = np.fromfile('data/train_x.bin', dtype='uint8')
+	X = np.fromfile('train_x.bin', dtype='uint8')
 	X = X.reshape((100000,60,60))
-	Y = open_csv("data/train_y.csv")
+	Y = open_csv("train_y.csv")
 
 	X_train = X[0:BRK_PT]
 	y_train = Y[0:BRK_PT]
 
-	X_test = X[BRK_PT:END_PT]
-	y_test = Y[BRK_PT:END_PT]
+	X_test = X[BRK_PT:END_PT+1]
+	y_test = Y[BRK_PT:END_PT+1]
 
 	if K.image_dim_ordering() == 'th':
 	    X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
@@ -59,6 +59,7 @@ def main():
 	print('X_train shape:', X_train.shape)
 	print(X_train.shape[0], 'train samples')
 	print(X_test.shape[0], 'test samples')
+	print(y_train.shape[0],y_test.shape[0])
 
 	# # convert class vectors to binary class matrices
 	Y_train = np_utils.to_categorical(y_train, nb_classes)
