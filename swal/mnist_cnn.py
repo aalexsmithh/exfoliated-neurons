@@ -65,7 +65,6 @@ def main():
 	Y_train = np_utils.to_categorical(y_train, nb_classes)
 	Y_test = np_utils.to_categorical(y_test, nb_classes)
 
-	print (Y_train[0])
 
 	model = Sequential()
 
