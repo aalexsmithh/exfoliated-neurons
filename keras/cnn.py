@@ -6,12 +6,14 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
+from keras.models import load_model
 from keras import backend as K
 import csv
+import sys
 
-batch_size = 128
+batch_size = 200
 nb_classes = 19
-nb_epoch = 12
+nb_epoch = 10
 
 # input image dimensions
 img_rows, img_cols = 60, 60
@@ -20,7 +22,7 @@ nb_filters = 32
 # size of pooling area for max pooling
 pool_size = (2, 2)
 # convolution kernel size
-kernel_size = (3, 3)
+kernel_size = (5, 5)
 
 # the data, shuffled and split between train and test sets
 def open_csv(filename):
@@ -35,15 +37,20 @@ X_data = np.fromfile('../train_x.bin', dtype='uint8')
 y_data = open_csv('../train_y.csv')
 print(y_data[0])
 print(len(y_data))
-X_data = X_data.reshape((100000,3600))
-X_train = X_data[:90000, :]
-X_test = X_data[90000:, :]
+X_data = X_data.reshape((100000,60,60))
+X_train = X_data[:90000]
+X_test = X_data[90000:]
 y_train = np.array(y_data[:90000])
 y_test = np.array(y_data[90000:])
-X_train = X_train.reshape(-1, 1, 60, 60)
-X_test = X_test.reshape(-1, 1, 60, 60)
 y_train = y_train.astype(np.int32)
 y_test = y_test.astype(np.int32)
+
+# X_train = np.fromfile('../train_x.bin', dtype='uint8')
+# X_test = np.fromfile('../test_x.bin', dtype='uint8')
+# y_train = np.array(open_csv('../train_y.csv'))
+# X_train = X_train.reshape((100000,60,60))
+# X_test = X_test.reshape((len(X_test)/3600,60,60))
+# y_train = y_train.astype(np.int32)
 
 if K.image_dim_ordering() == 'th':
     X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
@@ -66,30 +73,46 @@ print(X_test.shape[0], 'test samples')
 Y_train = np_utils.to_categorical(y_train, nb_classes)
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
-model = Sequential()
+if len(sys.argv) != 2:
+  model = Sequential()
 
-model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
-                        border_mode='valid',
-                        input_shape=input_shape))
-model.add(Activation('relu'))
-model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=pool_size))
-model.add(Dropout(0.25))
+  model.add(Convolution2D(30, 5, 5,
+                          border_mode='valid',
+                          input_shape=input_shape))
+  model.add(Activation('relu'))
+  model.add(MaxPooling2D(pool_size=pool_size))
+  model.add(Convolution2D(15, 3, 3))
+  model.add(Activation('relu'))
+  model.add(MaxPooling2D(pool_size=pool_size))
+  model.add(Dropout(0.2))
 
-model.add(Flatten())
-model.add(Dense(256))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(nb_classes))
-model.add(Activation('softmax'))
+  model.add(Flatten())
+  model.add(Dense(128))
+  model.add(Activation('relu'))
+  model.add(Dense(50))
+  model.add(Activation('relu'))
+  model.add(Dense(nb_classes))
+  model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy',
-              optimizer='adadelta',
-              metrics=['accuracy'])
+  model.compile(loss='categorical_crossentropy',
+                optimizer='adadelta',
+                metrics=['accuracy'])
+
+else:
+  model = load_model(sys.argv[1])
 
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,
-          verbose=1, validation_data=(X_test, Y_test))
-score = model.evaluate(X_test, Y_test, verbose=0)
-print('Test score:', score[0])
-print('Test accuracy:', score[1])
+          verbose=1)#, validation_data=(X_test, Y_test))
+# score = model.evaluate(X_test, Y_test, verbose=0)
+# print('Test score:', score[0])
+# print('Test accuracy:', score[1])
+
+model.save(str(nb_epoch) + '_epochs.model')
+
+classes = model.predict_classes(X_test, batch_size=32)
+output = [['id', 'category']]
+for i in range(len(classes)):
+  output.append([i, classes[i]])
+with open("mal_output1.csv", "wb") as f:
+    writer = csv.writer(f)
+    writer.writerows(output)
