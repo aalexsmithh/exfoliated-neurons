@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.misc as disp
-import sklearn.cluster, cPickle, time, csv, sklearn.linear_model#, cv2,load
+import sklearn.cluster, cPickle, time, csv, sklearn.linear_model, cv2, load
 
 def main():
 	# X = load.load("X1.pkl")
