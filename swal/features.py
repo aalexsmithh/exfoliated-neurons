@@ -53,7 +53,6 @@ def run_clust():
 	vocab = create_vocab(features,128)
 	print "\t" + str(len(vocab)) + " features assembled"
 	print "Clustering..."
-	# clusters = sklearn.cluster.KMeans(n_clusters=50,verbose=0)
 	clusters = sklearn.cluster.MiniBatchKMeans(50)
 	clusters.fit(vocab)
 	print "Saving..."
