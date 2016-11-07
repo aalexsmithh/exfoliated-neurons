@@ -100,7 +100,8 @@ def open_csv(filename):
 		csv_in = csv.reader(csvfile, delimiter=',', quotechar='"')
 		for line in csv_in:
 			ret.append(line[1])
-		return np.asarray(ret[1:],dtype='uint')
+		print(len(ret))
+		return np.asarray(ret[:],dtype='uint')
 
 
 if __name__ == '__main__':
