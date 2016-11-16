@@ -12,13 +12,13 @@ from keras import backend as K
 import csv
 import sys
 
-batch_size = 200
+batch_size = 150
 nb_classes = 19
-nb_epoch = 128
+nb_epoch = 100
 
 earlyStopping=keras.callbacks.EarlyStopping(monitor='val_loss', patience=8, verbose=0, mode='auto')
-saver = keras.callbacks.ModelCheckpoint('./128_64_final_output', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto')
-logger = keras.callbacks.CSVLogger('J_over_time.csv', separator=',', append=False)
+saver = keras.callbacks.ModelCheckpoint('./128_64_final_output2', monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto')
+logger = keras.callbacks.CSVLogger('J_over_time2.csv', separator=',', append=False)
 # input image dimensions
 img_rows, img_cols = 60, 60
 # number of convolutional filters to use
@@ -93,7 +93,7 @@ if len(sys.argv) != 2:
   model.add(Flatten())
   model.add(Dense(128))
   model.add(Activation('relu'))
-  model.add(Dense(64))
+  model.add(Dense(32))
   model.add(Activation('relu'))
   model.add(Dense(nb_classes))
   model.add(Activation('softmax'))
@@ -111,12 +111,12 @@ model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,
 # print('Test score:', score[0])
 # print('Test accuracy:', score[1])
 
-model.save(str(nb_epoch) + 'outputter.model')
+model.save(str(nb_epoch) + 'outputter2.model')
 
 classes = model.predict_classes(X_test, batch_size=32)
 output = [['id', 'category']]
 for i in range(len(classes)):
   output.append([i, classes[i]])
-with open("mal_output_128_64_final_output.csv", "wb") as f:
+with open("mal_output_128_64_final_output2.csv", "wb") as f:
     writer = csv.writer(f)
     writer.writerows(output)
